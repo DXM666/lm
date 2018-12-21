@@ -3,7 +3,28 @@ import "./App.css";
 import { Button, Checkbox, Form, Icon, Input } from "antd";
 import React, { Component } from "react";
 
+import { SiteConf } from "./common/config";
+
 class App extends Component {
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        fetch("http://127.0.0.1:5000/", {
+          method: "GET",
+          mode: "cors"
+        })
+          .then(res => {
+            console.log(res);
+            return res.json();
+          })
+          .then(res => {
+            console.log("res", res);
+          });
+      }
+    });
+  };
+
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
