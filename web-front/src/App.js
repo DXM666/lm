@@ -10,9 +10,13 @@ class App extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        let formData = new FormData();
+        formData.append("userName", values.userName);
+        formData.append("password", values.password);
         fetch("http://127.0.0.1:5000/", {
-          method: "GET",
-          mode: "cors"
+          method: "POST",
+          mode: "cors",
+          body: formData
         })
           .then(res => {
             console.log(res);
