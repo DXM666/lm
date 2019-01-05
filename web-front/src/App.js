@@ -14,7 +14,13 @@ class App extends Component {
               exact={true}
               key={route.path}
               path={route.path}
-              component={route.component}
+              render={props => (
+                <route.component
+                  {...props}
+                  routes={route.routes}
+                  isShowSideMenu={route.isShowSideMenu}
+                />
+              )}
             />
           ))}
         </Switch>
