@@ -26,7 +26,8 @@ class Login extends Component {
               this.props.history.push({
                 pathname: "/main",
                 state: {
-                  token: res.token
+                  token: res.token,
+                  username: values.username
                 }
               });
             }
