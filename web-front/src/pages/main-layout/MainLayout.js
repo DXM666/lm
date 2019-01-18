@@ -62,7 +62,7 @@ export class MainLayout extends Component {
       <Menu>
         <Menu.Item>
           <Icon type="user" />
-          {/* <span>{this.props.location.state.username}</span> */}
+          <span>{sessionStorage.getItem("account")}</span>
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item>

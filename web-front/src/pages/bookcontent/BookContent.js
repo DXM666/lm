@@ -1,4 +1,4 @@
-import { Divider, Drawer } from "antd";
+import { Button, Divider, Drawer } from "antd";
 import React, { Component } from "react";
 
 import { SiteConf } from "../../common/config";
@@ -9,7 +9,9 @@ export class BookContent extends Component {
     this.state = {
       visible: false,
       chapterList: [],
-      chapterInfo: ""
+      chapterInfo: "",
+      currentChapter: "",
+      currentChapterNum: 0
     };
   }
 
@@ -22,7 +24,11 @@ export class BookContent extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        this.setState({ chapterList: res.mixToc.chapters });
+        this.setState({
+          chapterList: res.mixToc.chapters,
+          currentChapter: res.mixToc.chapters[0].title
+        });
+        this.getChapterInfo(res.mixToc.chapters[0].link, 0);
       })
       .catch(e => console.log(e));
   }
@@ -39,21 +45,36 @@ export class BookContent extends Component {
     });
   };
 
-  getChapterInfo(chapterLink) {
-    const url =
-      "http://chapter2.zhuishushenqi.com/chapter/" +
-      encodeURIComponent(chapterLink);
-    fetch(url, {
-      method: "GET",
-      mode: "cors"
-    })
-      .then(res => {
-        return res.json();
+  getChapterInfo(chapterLink, index) {
+    if (chapterLink) {
+      const url =
+        "http://chapter2.zhuishushenqi.com/chapter/" +
+        encodeURIComponent(chapterLink);
+      fetch(url, {
+        method: "GET",
+        mode: "cors"
       })
-      .then(res => {
-        this.setState({ chapterInfo: res.chapter.body });
-      })
-      .catch(e => console.log(e));
+        .then(res => {
+          return res.json();
+        })
+        .then(res => {
+          this.setState({
+            currentChapter: this.state.chapterList[index].title,
+            chapterInfo: res.chapter.body,
+            currentChapterNum: index
+          });
+        })
+        .catch(e => console.log(e));
+    }
+  }
+
+  changeChapter(type, index) {
+    if (type === "next") {
+      this.getChapterInfo(this.state.chapterList[index + 1].link, index + 1);
+    }
+    if (type === "previous") {
+      this.getChapterInfo(this.state.chapterList[index - 1].link, index - 1);
+    }
   }
 
   render() {
@@ -62,18 +83,32 @@ export class BookContent extends Component {
         <h1 style={{ textAlign: "center" }}>
           {this.props.location.state.content.title}
         </h1>
+        <h2 style={{ textAlign: "center" }}>{this.state.currentChapter}</h2>
         <div style={{ textAlign: "center" }}>
-          <span onClick={this.onClose} style={{ color: "#1890ff" }}>
+          <Button
+            onClick={() =>
+              this.changeChapter("previous", this.state.currentChapterNum)
+            }
+            style={{ color: "#1890ff", border: 0 }}
+          >
             上一章
-          </span>
+          </Button>
           <Divider style={{ backgroundColor: "black" }} type="vertical" />
-          <span onClick={this.showDrawer} style={{ color: "#1890ff" }}>
+          <Button
+            onClick={this.showDrawer}
+            style={{ color: "#1890ff", border: 0 }}
+          >
             目录
-          </span>
+          </Button>
           <Divider style={{ backgroundColor: "black" }} type="vertical" />
-          <span href="true" style={{ color: "#1890ff" }}>
+          <Button
+            onClick={() =>
+              this.changeChapter("next", this.state.currentChapterNum)
+            }
+            style={{ color: "#1890ff", border: 0 }}
+          >
             下一章
-          </span>
+          </Button>
         </div>
         <Drawer
           title="目录"
@@ -84,9 +119,14 @@ export class BookContent extends Component {
         >
           {this.state.chapterList.map((item, index) => {
             return (
-              <p onClick={() => this.getChapterInfo(item.link)} key={index}>
+              <Button
+                onClick={() => this.getChapterInfo(item.link, index)}
+                style={{ color: "#1890ff", border: 0 }}
+                key={index}
+                block={true}
+              >
                 {item.title}
-              </p>
+              </Button>
             );
           })}
         </Drawer>

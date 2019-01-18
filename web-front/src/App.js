@@ -1,21 +1,15 @@
 import React, { Component } from "react";
 import { Route, Router, Switch } from "react-router-dom";
 
-import { HomePageAction } from "./action/homepageaction";
 import { Provider } from "mobx-react";
-import { Store } from "./store/store";
 import { history } from "./common/history";
 import { routes } from "./routes";
-
-// ③实例化单一数据源
-const store = new Store();
-// ④实例化 actions，并且和 store 进行关联
-const actions = new HomePageAction(store);
+import { store } from "../src/pages/store/index";
 
 class App extends Component {
   render() {
     return (
-      <Provider store={store} actions={actions}>
+      <Provider store={store}>
         <Router history={history}>
           <Switch>
             {routes.map(route => (

@@ -23,10 +23,12 @@ class Login extends Component {
           })
           .then(res => {
             if (res.status) {
+              sessionStorage.setItem("token", res.token);
+              sessionStorage.setItem("account", values.username);
+              sessionStorage.setItem("password", values.password);
               this.props.history.push({
                 pathname: "/main",
                 state: {
-                  token: res.token,
                   username: values.username
                 }
               });

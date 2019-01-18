@@ -1,9 +1,12 @@
 .bookCard {
-    width: 20%;
-    margin: 5px;
-    float: left;
-  }
-  .bookDivider {
-    background-color: black;
-  }
-  
+  width: 20%;
+  margin: 5px;
+  float: left;
+}
+.bookDivider {
+  background-color: black;
+}
+.loading {
+  text-align: center;
+  margin-top: 40%;
+}
