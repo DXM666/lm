@@ -1,4 +1,4 @@
-import { action, observable, runInAction } from "mobx";
+import { action, observable } from "mobx";
 
 import { SiteConf } from "../../common/config";
 
@@ -8,7 +8,7 @@ export class RankStore {
   @observable requestStatus = "pending";
 
   @action
-  async getBookList(content) {
+  getBookList(content) {
     this.requestStatus = "pending";
     let url;
     if (content.location.state && content.location.state.bookPath) {
@@ -16,16 +16,15 @@ export class RankStore {
     } else {
       url = SiteConf.apiHost + "booklist/54d43437d47d13ff21cad58b";
     }
-    const data = await fetch(url, {
+    fetch(url, {
       method: "get",
       mode: "cors"
     })
       .then(res => res.json())
-      .then(res => res)
+      .then(res => {
+        this.books = res.ranking.books;
+        this.requestStatus = "success";
+      })
       .catch(e => console.log(e));
-    runInAction(() => {
-      this.books = data.ranking.books;
-      this.requestStatus = "success";
-    });
   }
 }

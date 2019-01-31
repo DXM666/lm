@@ -23,7 +23,7 @@ def login():
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     else:
-        resp = make_response(jsonify({'status': False, 'token': g.token.decode('utf8')}))
+        resp = make_response(jsonify({'status': True, 'token': g.token.decode('utf8')}))
         # 跨域设置
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp

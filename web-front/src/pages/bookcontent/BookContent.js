@@ -1,4 +1,15 @@
-import { Button, Divider, Drawer } from "antd";
+import "./BookContent.css";
+
+import {
+  Affix,
+  Button,
+  Divider,
+  Drawer,
+  Dropdown,
+  Icon,
+  Menu,
+  message
+} from "antd";
 import React, { Component } from "react";
 
 import { SiteConf } from "../../common/config";
@@ -11,7 +22,9 @@ export class BookContent extends Component {
       chapterList: [],
       chapterInfo: "",
       currentChapter: "",
-      currentChapterNum: 0
+      currentChapterNum: 0,
+      contentFontSize: 14,
+      fontSizeVisible: false
     };
   }
 
@@ -68,7 +81,51 @@ export class BookContent extends Component {
     }
   }
 
+  fontMenu() {
+    return (
+      <Menu>
+        <Menu.Item>
+          <div>
+            <span>字号：</span>
+            <Icon
+              type="plus-square"
+              theme="twoTone"
+              style={{ paddingRight: 5 }}
+              onClick={() => {
+                this.setState({
+                  contentFontSize: this.state.contentFontSize + 1
+                });
+              }}
+            />
+            <Icon
+              type="minus-square"
+              theme="twoTone"
+              onClick={() => {
+                this.setState({
+                  contentFontSize: this.state.contentFontSize - 1
+                });
+              }}
+            />
+          </div>
+        </Menu.Item>
+        <Menu.Item>
+          <div>
+            <span>字体：</span>
+          </div>
+        </Menu.Item>
+      </Menu>
+    );
+  }
+
   changeChapter(type, index) {
+    if (type === "previous" && index <= 0) {
+      message.error("已经是第一章啦！");
+      return;
+    }
+    if (type === "next" && index >= this.state.chapterList.length) {
+      message.error("已经是最后一章啦！");
+      return;
+    }
     if (type === "next") {
       this.getChapterInfo(this.state.chapterList[index + 1].link, index + 1);
     }
@@ -80,61 +137,85 @@ export class BookContent extends Component {
   render() {
     return (
       <div>
-        <h1 style={{ textAlign: "center" }}>
-          {this.props.location.state.content.title}
-        </h1>
-        <h2 style={{ textAlign: "center" }}>{this.state.currentChapter}</h2>
-        <div style={{ textAlign: "center" }}>
-          <Button
-            onClick={() =>
-              this.changeChapter("previous", this.state.currentChapterNum)
-            }
-            style={{ color: "#1890ff", border: 0 }}
-          >
-            上一章
-          </Button>
-          <Divider style={{ backgroundColor: "black" }} type="vertical" />
-          <Button
-            onClick={this.showDrawer}
-            style={{ color: "#1890ff", border: 0 }}
-          >
-            目录
-          </Button>
-          <Divider style={{ backgroundColor: "black" }} type="vertical" />
-          <Button
-            onClick={() =>
-              this.changeChapter("next", this.state.currentChapterNum)
-            }
-            style={{ color: "#1890ff", border: 0 }}
-          >
-            下一章
-          </Button>
-        </div>
-        <Drawer
-          title="目录"
-          placement="right"
-          closable={false}
-          onClose={this.onClose}
-          visible={this.state.visible}
+        <Dropdown
+          overlay={this.fontMenu()}
+          visible={this.state.fontSizeVisible}
+          onVisibleChange={visible => {
+            this.setState({
+              fontSizeVisible: visible
+            });
+          }}
         >
-          {this.state.chapterList.map((item, index) => {
-            return (
-              <Button
-                onClick={() => this.getChapterInfo(item.link, index)}
-                style={{ color: "#1890ff", border: 0 }}
-                key={index}
-                block={true}
-              >
-                {item.title}
-              </Button>
-            );
-          })}
-        </Drawer>
-        <p style={{ whiteSpace: "pre-line" }}>
-          {this.props.location.state.content.abstract
-            ? this.props.location.state.content.abstract
-            : this.state.chapterInfo}
-        </p>
+          <Affix className="setting" offsetTop={30}>
+            <Icon
+              style={{ fontSize: 20, color: "#1890ff" }}
+              type="font-colors"
+            />
+          </Affix>
+        </Dropdown>
+
+        <div>
+          <h1 style={{ textAlign: "center" }}>
+            {this.props.location.state.content.title}
+          </h1>
+          <h2 style={{ textAlign: "center" }}>{this.state.currentChapter}</h2>
+          <div style={{ textAlign: "center" }}>
+            <Button
+              onClick={() =>
+                this.changeChapter("previous", this.state.currentChapterNum)
+              }
+              style={{ color: "#1890ff", border: 0 }}
+            >
+              上一章
+            </Button>
+            <Divider style={{ backgroundColor: "black" }} type="vertical" />
+            <Button
+              onClick={this.showDrawer}
+              style={{ color: "#1890ff", border: 0 }}
+            >
+              目录
+            </Button>
+            <Divider style={{ backgroundColor: "black" }} type="vertical" />
+            <Button
+              onClick={() =>
+                this.changeChapter("next", this.state.currentChapterNum)
+              }
+              style={{ color: "#1890ff", border: 0 }}
+            >
+              下一章
+            </Button>
+          </div>
+          <Drawer
+            title="目录"
+            placement="right"
+            closable={false}
+            onClose={this.onClose}
+            visible={this.state.visible}
+          >
+            {this.state.chapterList.map((item, index) => {
+              return (
+                <Button
+                  onClick={() => this.getChapterInfo(item.link, index)}
+                  style={{ color: "#1890ff", border: 0 }}
+                  key={index}
+                  block={true}
+                >
+                  {item.title}
+                </Button>
+              );
+            })}
+          </Drawer>
+          <p
+            style={{
+              whiteSpace: "pre-line",
+              fontSize: this.state.contentFontSize
+            }}
+          >
+            {this.props.location.state.content.abstract
+              ? this.props.location.state.content.abstract
+              : this.state.chapterInfo}
+          </p>
+        </div>
       </div>
     );
   }

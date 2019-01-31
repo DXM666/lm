@@ -10,7 +10,7 @@ export class HomePageStore {
   @action
   getBookDetailContent() {
     const headers = new Headers({
-      Authorization: "bearer " + sessionStorage.getItem('token'),
+      Authorization: "bearer " + sessionStorage.getItem("token"),
       "Content-Type": "text/plain"
     });
     this.requestStatus = "pending";
@@ -18,7 +18,7 @@ export class HomePageStore {
     return fetch(url, {
       method: "GET",
       mode: "cors",
-      headers:headers
+      headers: headers
     })
       .then(res => {
         return res.json();

@@ -24,7 +24,7 @@ def get_sidermenu():
 
 @app.route('/booklist/<bookid>')
 def get_booklist(bookid):
-    if cache.get('booklist_'+bookid) and json.loads(cache.get('booklist_'+bookid))['ranking']['id'] == bookid:
+    if cache.get('booklist_'+bookid):
         resp = make_response(cache.get('booklist_'+bookid))
     elif r.get('booklist_'+bookid):
         resp = make_response(r.get('booklist_' + bookid))

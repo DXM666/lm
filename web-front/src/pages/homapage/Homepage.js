@@ -14,9 +14,6 @@ class Homepage extends Component {
 
   componentDidMount() {
     this.props.store.homePageStore.getBookDetailContent();
-    // await this.setState({
-    //   data: homeData
-    // });
   }
 
   render() {

@@ -4,8 +4,6 @@ import { Card, Spin } from "antd";
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
-import { SiteConf } from "../../common/config";
-
 @inject("store")
 @observer
 class Rank extends Component {
@@ -14,27 +12,8 @@ class Rank extends Component {
     this.state = { books: [], url: "" };
   }
 
-  getBookList = async content => {
-    if (content.location.state && content.location.state.bookPath) {
-      await this.setState({
-        url: SiteConf.apiHost + "booklist/" + content.location.state.bookPath
-      });
-    } else {
-      await this.setState({
-        url: SiteConf.apiHost + "booklist/54d43437d47d13ff21cad58b"
-      });
-    }
-    fetch(this.state.url, {
-      method: "get",
-      mode: "cors"
-    })
-      .then(res => res.json())
-      .then(res => this.setState({ books: res.ranking.books }))
-      .catch(e => console.log(e));
-  };
-
   componentDidMount() {
-    this.getBookList(this.props);
+    this.props.store.rankStore.getBookList(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
